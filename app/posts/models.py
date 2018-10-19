@@ -8,6 +8,15 @@ class Post(models.Model):
         verbose_name='작성자'
     )
 
+    # auto_now_add:객체가 처음 생성될떄의 시간 저장
+    # auto_now:객체가 save()가 호풀 될 때 마다 시간 저장
+    create_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = '포스트'
+        verbose_name_plural = f'{verbose_name} 목록'
+
     photo = models.ImageField('사진',upload_to='post')
 
 
