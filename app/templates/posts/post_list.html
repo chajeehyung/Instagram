@@ -3,7 +3,7 @@
 {% block content %}
 <div>
     {% for post in posts %}
-    <div>{{ post }}</div>
+    <div><img src="{{ post.photo.url }}" alt=""></div>
     {% endfor %}
 </div>
 {% endblock %}
