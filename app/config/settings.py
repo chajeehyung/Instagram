@@ -16,6 +16,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 # 사용자가 업로드한 파일이 저장될 Base 디렉토리
 MEDIA_ROOT = os.path.join(ROOT_DIR, '.media')
@@ -26,6 +27,12 @@ MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
+
+# 정적파일을 검색할 경로 목록
+STATICFILES_DIRS = [
+    STATIC_DIR,
+]
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4k@xswy=3xvtmo7ve*&+w#+tz0ld^x+57a$dwgplgo9ou8b121'
