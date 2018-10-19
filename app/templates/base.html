@@ -7,7 +7,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
-    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
     <title>Instagram</title>
 </head>
 <body>
@@ -19,6 +19,9 @@
             </form>
             <ul class="navbar-nav ml-md-auto">
                 <li class="nav-item mr-sm-1">
+                    <a href="{% url 'posts:post-create' %}" class="btn btn-outline-secondary">Add Posts</a>
+                </li>
+                <li class="nav-item mr-sm-1">
                     <a href="#" class="btn btn-outline-secondary">Explore</a>
                 </li>
                 <li class="nav-item mr-sm-1">
@@ -29,7 +32,7 @@
                 </li>
             </ul>
         </nav>
-        <nav class="nav">
+        <nav class="container-fluid mt-3">
             {% block content %}
             {% endblock %}
         </nav>
