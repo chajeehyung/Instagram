@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Post
 
 def post_list(request):
     # request
@@ -24,4 +25,9 @@ def post_list(request):
     #   posts.urls.app_name = 'posts'를 사용
     #   view의 URL은 비원둔다
     #   결과 : localhost:8080/posts/로 접근시 이 view가 처리하도록 함
-    pass
+    posts = Post.objects.all()
+    context = {
+        'posts':posts,
+    }
+
+    return render(request, 'posts/post_list.html')
