@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
+# from members.models import User
 from .models import Post
+from .forms import PostCreateform
 
 
 def post_list(request):
@@ -33,20 +36,19 @@ def post_list(request):
 
     return render(request, 'posts/post_list.html', context)
 
+
 def post_create(request):
-    #1. posts/post_create.html 구현
+    # 1. posts/post_create.html 구현
     # form 구현
     #   input[type=file]
     #   button[type=[submit]
 
-    #2. /posts/create/ URL에 이 view를 연결
+    # 2. /posts/create/ URL에 이 view를 연결
     #   URL명은 'post-create'를 사용
-    #3. render를 적절히 사용해서 해달 템플릿을 return
-    #4. base.html의
-
-    context = {
-
-    }
+    # 3. render를 적절히 사용해서 해달 템플릿을 return
+    # 4. base.html의
+    if not request.user.is_authenticated:
+        return
 
     if request.method == 'POST':
         # request.FILES에 form에서 보내느 파일객체가 들어있다
@@ -54,6 +56,18 @@ def post_create(request):
         # author는 User.objects.first()
         # photo는 request.FILE에 있는 내용을 저적히 꺼내서
         # 완료된 후 post:post-list 파일로 redirect
-        pass
+        post = Post(
+            # author=User.objects.first(),
+            author=request.user,
+            photo=request.FIlES['photo'],
+        )
+
+        post.save()
+        return redirect('posts:post-list')
+
     else:
+        form = PostCreateform()
+        context = {
+            'form': form,
+        }
         return render(request, 'posts/post_create.html', context)
