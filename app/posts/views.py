@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 
 # from members.models import User
 from .models import Post, Comment
-from .forms import PostCreateform, CommentCreateForm
+from .forms import PostCreateform, CommentCreateForm, PostForm
 
 
 def post_list(request):
@@ -57,9 +57,18 @@ def post_create(request):
         # author는 User.objects.first()
         # photo는 request.FILE에 있는 내용을 저적히 꺼내서
         # 완료된 후 post:post-list 파일로 redirect
-        form = PostCreateform(request.POST, request.FILES)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save(author=request.user)
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+
+            comment_content = form.cleaned_data['comment']
+            if comment_content:
+                post.comments.create(
+                    author=request.user,
+                    content=form.cleaned_data['comment']
+                )
             return redirect('posts:post-list')
     else:
         form = PostCreateform()
@@ -85,20 +94,8 @@ def comment_create(request, post_pk):
         post = Post.objects.get(pk=post_pk)
         form = CommentCreateForm(request.POST)
         if form.is_valid():
-            form.save(
-                post=post,
-                author=request.user,
-            )
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
             return redirect('posts:post-list')
-        # post.form.CommentCreateForm()를 사용
-        # form = CommentForm(request.POST)
-        # if form.is_valid():
-        #   form.save(author=request.user, post=post)
-
-        # content = request.POST['content']
-        # Comment.objects.create(
-        #     author=request.user,
-        #     post=post,
-        #     content=content,
-        # )
-        return redirect('posts:post-list')
