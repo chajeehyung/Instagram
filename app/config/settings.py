@@ -33,6 +33,10 @@ STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 
+# login_required 데코레이터에 의해
+# 로그인 페이지 이동해야 할 때 그 이동할 url
+LOGIN_URL = 'members:login'
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4k@xswy=3xvtmo7ve*&+w#+tz0ld^x+57a$dwgplgo9ou8b121'

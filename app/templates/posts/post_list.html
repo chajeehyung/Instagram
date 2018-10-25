@@ -10,6 +10,14 @@
             </div>
             <div class="card-body">
                 <img src="{{ post.photo.url }}" alt="" class="card-img">
+                <ul class="list-unstyled">
+                    {% for comment in post.comments.all %}
+                    <li>
+                        <strong>{{ commetn.author }}</strong>
+                        <strong>{{ comment.content }}</strong>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>

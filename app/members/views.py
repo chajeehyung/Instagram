@@ -7,29 +7,30 @@ from members.forms import LoginForm, SignupForm
 
 
 def login_view(request):
+
+    context = {}
     if request.method == 'POST':
         # 1. request.POST에 데이터가 옴
         # 2. 온 데이터 중에서 username에 해당하는 값과 password에 해당하는 값을  각각
         #   username, password변수에 할당
         # 3. 사용자 인증을 수행
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            # 인증 성공시
-            login(request, user)
+
+        # username, password를 밥는 무분을
+        # LoginForm을 사용하도록 변경
+        # 로그인에 실패했을경우, Template에 form.non_field_error를 사용해서 로그인이 실패했다는걸 출
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            login(request, form.user)
+            next_path = request.GET.get('next')
+            if next_path:
+                return redirect(next_path)
             return redirect('posts:post-list')
-        else:
-            # 인증 실패시
-            pass
 
     else:
         form = LoginForm()
-        context = {
-            'form': form,
-        }
 
-        return render(request, 'members/login.html', context)
+    context['form'] = form
+    return render(request, 'members/login.html', context)
 
 
 def logout_view(request):
@@ -48,38 +49,58 @@ def logout_view(request):
 
 
 def signup_view(request):
+    # render하는 경우
+    #  1. POST요청이며 사용자명이 이미 존재할 경우
+    #  2. POST요청이며 비밀번호가 같지 않은 경우
+    #  3. GET요청인 경우
+    # redirect하는 경우
+    #  1. POST요청이며 사용자명이 존재하지 않고 비밀번호가 같은 경우
+
+    """
+    if request.method가 POST면:
+        if 사용자명이 존재하면:
+            render1
+        if 비밀번호가 같지 않으면:
+            render2
+        (else, POST면서 사용자명도없고 비밀번호도 같으면):
+            redirect
+    (else, GET요청이면):
+        render
+    if request.method가 POST면:
+        if 사용자명이 존재하면:
+        if 비밀번호가 같지 않으면:
+        (else, POST면서 사용자명도없고 비밀번호도 같으면):
+            return redirect
+    (POST면서 사용자명이 존재하면)
+    (POST면서 비밀번호가 같지않으면)
+    (POST면서 사용자명이 없고 비밀번호도 같은 경우가 "아니면" -> GET요청도 포함)
+    return render
+    :param request:
+    :return:
+    """
+    context = {}
     if request.method == 'POST':
-        # 1. request.POST에 전달된 username, password1, password2를 각각 해당 이름의 변수에 할당
-        # 2. -x에서는 HttpResponse에 문자열로 에러를 리턴해주기
-        #   2-1 username에 해당하는 User가 이미 있다면
-        #       사용자명 ({ usernama }) 이미 사용중입니다
-        #   2-2 password1과 password2가 일치하지 않는다면
-        #       비밀번호와 비밀번호 확인란의 값이 일치하지 않습니다.
-        # 3. 위의 두 경우가 아니라면
-        #     새 User를 생성, 해당 User로 로그인 시켜준 후 'posts:post-list'로 redirect 처
-
-        username = request.POST['username']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
-
-        if User.objects.filter(username=username).exists():
-            return HttpResponse(f'사용자면({username})은 이미 사용중입니다.')
-        if password1 != password2:
-            return HttpResponse('비밀번호와 비밀번호 확인란의 값이 일치하지 않습니다.')
-
-        # create_user 메서드는 create와 달리 자동으로 해싱해줌
-        user = User.objects.create_user(
-            username=username,
-            password=password1,
-        )
-        login(request, user)
-        return redirect('posts:post-list')
-
-
-        pass
+        # POST로 전달된 데이터를 확인
+        # 올바르다면 User를 생성하고 post-list화면으로 이동
+        # (is_valid()가 True면 올바르다고 가정)
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # user = User.objects.create_user(
+            #     username=form.cleaned_data['username'],
+            #     password=form.cleaned_data['password1'],
+            # )
+            login(request, user)
+            # form이 유효하면 여기서 함수 실행 종료
+            return redirect('posts:post-list')
+        # form이 유효하지 않을 경우, 데이터가 바인딩된 상태로 if-else구문 아래의 render까지 이동
     else:
+        # GET요청시 빈 Form을 생성
         form = SignupForm()
-        context = {
-            'form': form,
-        }
-        return render(request, 'members/signup.html', context)
+
+    # GET요청시 또는 POST로 전달된 데이터가 올바르지 않을 경우
+    #  signup.html에
+    #   빈 Form또는 올바르지 않은 데이터에 대한 정보가
+    #   포함된 Form을 전달해서 동적으로 form을 렌더링
+    context['form'] = form
+    return render(request, 'members/signup.html', context)
