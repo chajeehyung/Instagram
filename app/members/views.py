@@ -125,7 +125,7 @@ def profile(request):
         if form.is_valid():
             form.save()
             # is_valid()를 통과하고 인스턴스 수정이 완료되면
-            # message모듈을 사용해서 템플릿에 수정완료 메세지 표시
+            # message모듈을 사용해서 템플릿에 수정완료 메세지 표
 
     form = UserProfileForm(instance=request.user)
     context = {
