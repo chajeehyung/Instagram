@@ -1,9 +1,11 @@
+import re
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 # from members.models import User
-from .models import Post, Comment
-from .forms import PostCreateform, CommentCreateForm, PostForm
+from .models import Post, Comment, HashTag
+from .forms import PostCreateform, CommentCreateForm, PostForm, CommentForm
 
 
 def post_list(request):
@@ -92,10 +94,20 @@ def comment_create(request, post_pk):
     # 4. posts:post_list로 redirect하기
     if request.method == 'POST':
         post = Post.objects.get(pk=post_pk)
-        form = CommentCreateForm(request.POST)
+        form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.post = post
             comment.author = request.user
             comment.save()
+
+            # comment가 가진 content속성에서
+            # 해시태그에 해당하는 문자열을 가져와서
+            # HashTag객체를 가져오거나 생성(get-or-create)
+            # 이후 comment.tags에 해당 객체를 추가
+            # p = re.compile(r'#(?P<tag>\w+)')
+            # tags = [HashTag.objects.get_or_create(name=name)[0]
+            #         for name in re.findall(p, comment.content)]
+            # comment.tags.set(tags)
+
             return redirect('posts:post-list')
