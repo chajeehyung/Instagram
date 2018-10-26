@@ -111,3 +111,22 @@ def comment_create(request, post_pk):
             # comment.tags.set(tags)
 
             return redirect('posts:post-list')
+
+def tag_post_list(request, tag_name):
+    # Post중, 자신에세 속한 Comment가 가진 HashTag목록 중 tag_name이 name인 HashTag가 포함된
+    # Post목록을 posts변수에 할당
+    # context에 담아서 리턴 reader
+    # HTMLㅣ: /post
+
+    posts = Post.objects.filter(
+        comments__tags__name=tag_name).distinct()
+    context = {
+        'posts': posts,
+    }
+
+    return render(request, 'posts/tag_post_list.html', context)
+
+def tag_search(request):
+    search_keyword = request.GET.get('search_keyword')
+    substituted_keyword = re.sub(r'#|\s+', '', search_keyword)
+    return redirect('tag-post-list', substituted_keyword)

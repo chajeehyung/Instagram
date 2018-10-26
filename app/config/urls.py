@@ -18,12 +18,14 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from posts.views import tag_post_list
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('media/<path:path>', views.media_servs),
     path('posts/', include('posts.urls')),
+    path('explore/tags/<str:tag_name>/', tag_post_list, name='tag-post-list'),
     path('members/', include('members.urls')),
 ]
 # MEDIA_URL로 시작하는 URL은 static()내의 serve 함수를

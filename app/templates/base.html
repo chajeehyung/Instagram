@@ -9,13 +9,31 @@
     <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
     <title>Instagram</title>
+    <style>
+       .square {
+		}
+		.square:before {
+			content: '';
+			padding: 50% 0;
+			display: inline-block;
+		}
+		.square > .thumbnail {
+            display: block;
+            width: 100%;
+            background-size: cover;
+            background-position: center center;
+        }
+    </style>
 </head>
 <body>
     <div id="wrap">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a href="{% url 'posts:post-list' %}" class="navbar-brand">Instagram</a>
-            <form action="#" class="form-inline">
-                <input type="tel" class="form-control" placeholder="검색">
+            <form action="{% url 'posts:tag-search' %}" class="form-inline ml-md-auto">
+                <input type="text"
+                       name="search_keyword"
+                       class="form-control"
+                       placeholder="검색">
             </form>
             <ul class="navbar-nav ml-md-auto">
                 <li class="nav-item mr-sm-1">
@@ -28,7 +46,7 @@
                     <a href="#" class="btn btn-outline-secondary">Favorite</a>
                 </li>
                 <li class="nav-item mr-sm-1">
-                    <a href="#" class="btn btn-outline-secondary">
+                    <a href="{% url 'members:profile' %}" class="btn btn-outline-secondary">
                         profile
                         {% if user.is_authenticated %}
                             ({{ user.username }})
