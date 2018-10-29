@@ -1,3 +1,4 @@
+import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -134,3 +135,28 @@ def profile(request):
         'form': form,
     }
     return render(request, 'members/profile.html', context)
+
+def facebook_login(request):
+    # URL : .members/facebook-login/
+    # URL name: 'members:facebook-login'
+    # request.GET에 전달된 'code'값을
+    # 그대로 HttpResponse로 출력
+    api_get_access_token = 'https://graph.facebook.com/v3.2/oauth/access_token'
+    code = request.GET.get('code')
+
+    param = {
+        'client_id': 2116108165373949,
+        'redirect_uri': 'http://localhost:8000/members/facebook-login/',
+        'client_secret': '92ca158012c0c07459e8173ce2ec8a1&',
+        'code': code,
+    }
+
+    response = requests.get(api_get_access_token, param)
+    data = response.json()
+    # response_object = json.loads(response.text)
+    #
+    # return HttpResponse('{}, {}'.format(
+    #     response_object,
+    #     type(response_object),
+    # ))
+    access_token = data['access_token']
