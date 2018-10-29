@@ -36,7 +36,9 @@ class Post(models.Model):
         ordering = ['-pk']
 
     def like_toggle(self, user):
-        pass
+        postlike, postlike_created = self.postlike_set.get_or_create(user=user)
+        if not postlike_created:
+            postlike.delete()
 
 
 class Comment(models.Model):

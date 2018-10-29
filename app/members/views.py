@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -8,7 +9,6 @@ from members.forms import LoginForm, SignupForm, UserProfileForm
 
 
 def login_view(request):
-
     context = {}
     if request.method == 'POST':
         # 1. request.POST에 데이터가 옴
@@ -106,6 +106,7 @@ def signup_view(request):
     context['form'] = form
     return render(request, 'members/signup.html', context)
 
+
 @login_required
 def profile(request):
     # GET요청시에는 현재 로그인한 유저의 값을 가진
@@ -125,11 +126,11 @@ def profile(request):
         if form.is_valid():
             form.save()
             # is_valid()를 통과하고 인스턴스 수정이 완료되면
-            # message모듈을 사용해서 템플릿에 수정완료 메세지 표
+            # message모듈을 사용해서 템플릿에 수정완료 메세지 표시
+            messages.success(request, '프로필 수정이 완료되었습니다')
 
     form = UserProfileForm(instance=request.user)
     context = {
         'form': form,
     }
-
     return render(request, 'members/profile.html', context)
