@@ -13,16 +13,30 @@ class Post(models.Model):
         verbose_name='작성자'
     )
 
+    photo = models.ImageField(
+        '사진',
+        upload_to='post'
+    )
+
     # auto_now_add:객체가 처음 생성될떄의 시간 저장
     # auto_now:객체가 save()가 호풀 될 때 마다 시간 저장
     create_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
+    like_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='PostLike',
+        related_name='like_posts',
+        related_query_name='like_posts',
+    )
+
     class Meta:
         verbose_name = '포스트'
-        verbose_name_plural = f'{verbose_name} 목록'
+        verbose_name_plural = f'{verbose_name} 목록',
+        ordering = ['-pk']
 
-    photo = models.ImageField('사진', upload_to='post')
+    def like_toggle(self, user):
+        pass
 
 
 class Comment(models.Model):
@@ -89,3 +103,26 @@ class HashTag(models.Model):
     class Meta:
         verbose_name = '해시태그'
         verbose_name_plural = f'{verbose_name} 목록'
+
+
+class PostLike(models.Model):
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return 'Post[{post_pk}] Like (User: {username})'.format(
+            post_pk=self.post.pk,
+            username=self.user.username,
+        )
+
+    class Meta:
+        unique_together = (
+            ('post', 'user')
+        )

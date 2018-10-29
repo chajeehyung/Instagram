@@ -30,3 +30,6 @@ class User(AbstractUser):
             return self.img_profile.url
         return static('images/blank_user.png')
 
+    def like_toggle(self, post):
+        pass
+

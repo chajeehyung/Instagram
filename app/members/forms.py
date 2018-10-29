@@ -4,12 +4,13 @@ from django.contrib.auth import authenticate, get_user_model
 # from django.contrib.auth.models import User
 # from members.models import User
 
-#1. settings.AUTH_USER_MODEL의 값을 사용해서
+# 1. settings.AUTH_USER_MODEL의 값을 사용해서
 # 사용자 모델 클래스를 반환
-#2. 사용자 모델 클래스에 대한 관계를 설정할 때
+# 2. 사용자 모델 클래스에 대한 관계를 설정할 때
 # 관계필드(ForeignKey, ManyToMany, OneToOne)의 관계부분에
 # settings.AUTH_USER_MODEL(문자열)을 사용
 User = get_user_model()
+
 
 class LoginForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -46,7 +47,6 @@ class LoginForm(forms.Form):
         if self.errors:
             raise ValueError('폼의 데이터 유효성 검증이 실패하였습니다')
         return self._user
-
 
 
 class SignupForm(forms.Form):
@@ -98,6 +98,7 @@ class SignupForm(forms.Form):
             password=self.cleaned_data['password2'],
         )
         return user
+
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
